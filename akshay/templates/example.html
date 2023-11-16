@@ -1,0 +1,16 @@
+<!-- example.html -->
+
+{% extends 'layout.html' %}
+
+{% block content %}
+    <!-- Your page content goes here -->
+
+    <!-- Trigger the modal to display -->
+    <script>
+        console.log('Modal script executed');
+        var modal = document.getElementById('flashModal');
+        var overlay = document.getElementById('overlay');
+        modal.style.display = 'block';
+        overlay.style.display = 'block';
+    </script>
+{% endblock %}

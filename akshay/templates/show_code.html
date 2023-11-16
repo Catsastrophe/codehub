@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Show Code</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            display: flex;
+            max-width: 800px;
+            width: 100%;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            animation: fadeInUp 1s;
+        }
+
+        .code-container {
+            flex: 4;
+            overflow: auto;
+            padding: 10px;
+            background-color: #d3d3d3;
+            border-radius: 5px;
+            max-height: 500px; /* Set your preferred max height */
+            position: relative;
+        }
+
+        .code-box {
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            background-color: #f4f4f4;
+            overflow-x: auto;
+            height: 75%; /* Make the code box take full height */
+            text-align: left;
+            position: relative;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #007bff; /* Blue color */
+            color: white;
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px; /* Rounded edges */
+            z-index: 1; /* Ensure the button is above the scrollbar */
+            animation: fadeIn 1s;
+        }
+
+        .comment-container {
+            flex: 1;
+            padding: 20px;
+            animation: fadeIn 1s;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        li {
+            margin: 10px 0;
+        }
+
+        form {
+            margin-top: 20px;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            border-radius: 5px; /* Rounded edges */
+            border: 1px solid #ddd;
+            margin-top: 10px;
+        }
+
+        input[type="submit"], .copy-btn {
+            background-color: #007bff; /* Blue color */
+            color: white;
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px; /* Rounded edges */
+            margin-top: 10px;
+            animation: fadeInUp 1s;
+        }
+
+        a {
+            text-decoration: none;
+            color: #007bff;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="code-container">
+        <h1>{{ filename }}</h1>
+        <button class="copy-btn" onclick="copyToClipboard()">Copy Code</button>
+        <div class="code-box" id="codeBox">
+            {{ highlighted_code|safe }}
+        </div>
+    </div>
+    <div class="comment-container">
+        {% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <ul class="messages">
+            <li>{{ messages[-1] }}</li>
+        </ul>
+    {% endif %}
+{% endwith %}
+        <h2>Uploaded by: {{ current_user.username }}</h2>
+        <h2>Comments</h2>
+        <ul>
+            {% for comment in comments %}
+                <li>{{ comment.user }}: {{ comment.text }}</li>
+            {% endfor %}
+        </ul>
+
+        <!-- Form to submit a new comment -->
+        <h2>Add a Comment:</h2>
+        <form action="{{ url_for('add_comment', filename=filename) }}" method="post">
+            <div>
+                <textarea name="comment_text" rows="4" cols="50"></textarea>
+            </div>
+            <div>
+                <input type="submit" value="Submit Comment">
+            </div>
+        </form>
+        <a href="{{ url_for('index') }}">Back to Home</a>
+    </div>
+</div>
+
+<script>
+    function copyToClipboard() {
+        var codeBox = document.getElementById('codeBox');
+        var range = document.createRange();
+        range.selectNode(codeBox);
+        window.getSelection().removeAllRanges();
+        window.getSelection().addRange(range);
+        document.execCommand('copy');
+        window.getSelection().removeAllRanges();
+        alert('Code copied to clipboard!');
+    }
+</script>
+
+</body>
+</html>
